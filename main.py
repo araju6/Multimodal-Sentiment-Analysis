@@ -8,3 +8,5 @@ print(device)
 #params
 batch_size = 8
 
+
+

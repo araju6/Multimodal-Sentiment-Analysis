@@ -8,8 +8,8 @@ class SpectrogramCNN(nn.Module):
 
     def __init__(self):
         super().__init__()
-        conv_layers = nn.Sequential(
-            nn.Conv2d(in_channels=3, out_channels=32, kernel_size=(5,5), stride=(1,1),),
+        self.conv_layers = nn.Sequential(
+            nn.Conv2d(in_channels=1, out_channels=32, kernel_size=(5,5), stride=(1,1),),
             nn.BatchNorm2d(32),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=(2, 2)),
@@ -18,7 +18,7 @@ class SpectrogramCNN(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=(2, 2)),
         )
-        fc_layers = nn.Sequential(
+        self.fc_layers = nn.Sequential(
             nn.Flatten(),
             nn.Linear(64 * 30 * 48, 512),
             nn.ReLU(),
@@ -28,8 +28,8 @@ class SpectrogramCNN(nn.Module):
             nn.Linear(128, 3)
         )
 
-    def forward(self, image, targets = None):
-        x = self.conv_layers(x)
+    def forward(self, image):
+        x = self.conv_layers(image)
         x = self.fc_layers(x)
         return x
 
