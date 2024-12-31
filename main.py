@@ -6,6 +6,5 @@ device = 'mps' if torch.backends.mps.is_available() else 'cpu'
 print(device)
 
 #params
-
-
+batch_size = 8
 

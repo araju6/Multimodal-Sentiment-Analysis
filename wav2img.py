@@ -3,16 +3,22 @@ import scipy
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
+import torch
+
+device = 'mps' if torch.backends.mps.is_available() else 'cpu'
+
 
 class wavConverter:
 
-    def __init__(self, file_path) -> None:
-        self.file_path = file_path
+    def __init__(self, file_paths) -> None:
+        self.file_paths = file_paths
 
     def convert(self):
-        with wave.open(self.file_path, 'rb') as wav_file:
-            # Get the number of channels
-            num_channels = wav_file.getnchannels()
+        batch = []
+        for file_path in self.file_paths:
+            with wave.open(file_path, 'rb') as wav_file:
+                # Get the number of channels
+                num_channels = wav_file.getnchannels()
             #print(num_channels)
             if num_channels > 1:
                 data = data[:, 0]
@@ -21,7 +27,10 @@ class wavConverter:
 
             S = cv2.resize(S, (200, 128))
             S = (S - S.min()) / (S.max() - S.min())
-            return f,t,S
+            S = np.stack([S] * 3)
+            batch.append(S)
+        batch_spectrograms = np.stack(batch, axis=0)
+        return torch.FloatTensor(batch_spectrograms).to(device)
     
 a = wavConverter("Dataset/YAF_angry/YAF_bar_angry.wav")
 f, t, Sxx = a.convert()
