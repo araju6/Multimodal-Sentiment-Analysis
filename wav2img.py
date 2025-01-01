@@ -8,7 +8,7 @@ import torch
 device = 'mps' if torch.backends.mps.is_available() else 'cpu'
 
 
-class wavConverter:
+class wavImgConverter:
 
     def __init__(self, file_paths) -> None:
         self.file_paths = file_paths
@@ -31,6 +31,6 @@ class wavConverter:
         batch_spectrograms = np.stack(batch, axis=0)
         return torch.FloatTensor(batch_spectrograms).to(device).unsqueeze(1)
     
-a = wavConverter(["Dataset/YAF_angry/YAF_bar_angry.wav", "Dataset/YAF_angry/YAF_hate_angry.wav"])
+a = wavImgConverter(["Dataset/YAF_angry/YAF_bar_angry.wav", "Dataset/YAF_angry/YAF_hate_angry.wav"])
 Sxx = a.convert()
 print(Sxx.shape)
