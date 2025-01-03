@@ -22,7 +22,7 @@ class wavTextConverter:
             batch.append(text_numbers)
 
         max_len = max(len(seq) for seq in batch)
-        padded_batch = [seq + [0]*(max_len - len(seq)) for seq in batch]
+        padded_batch = [seq + [0]*(20 - len(seq)) for seq in batch]
         
         return torch.tensor(padded_batch).to(device=device)
     
