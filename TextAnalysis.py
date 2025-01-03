@@ -9,7 +9,7 @@ class TextLSTM(nn.Module):
     def __init__(self):
         super().__init__()
         self.LSTM = nn.LSTM(input_size= 20, hidden_size=20, num_layers=2, batch_first=True)
-        self.fc = nn.Sequential(nn.Linear(20, 3), nn.Dropout(0.5))
+        self.fc = nn.Sequential(nn.Dropout(0.5), nn.Linear(20, 3))
 
 
     def forward(self, x):
