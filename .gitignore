@@ -2,3 +2,5 @@ venv/
 Dataset/
 .DS_Store
 dataset_metadata.csv
+__pycache__/
+test_dataset.csv
