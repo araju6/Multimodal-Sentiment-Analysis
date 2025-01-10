@@ -12,9 +12,9 @@ device = 'mps' if torch.backends.mps.is_available() else 'cpu'
 print(device)
 
 #params
-batch_size = 3
+batch_size = 8
 
-data = pd.read_csv('test_dataset.csv').sample(frac=1, random_state=69)
+data = pd.read_csv('dataset_metadata.csv').sample(frac=1, random_state=69)
 
 train_size = int(0.8 * len(data))
 train_data = data[:train_size]
@@ -35,7 +35,7 @@ for epoch in range(10):
     for i in range(0, len(train_data), batch_size):
         batch_files = train_data.iloc[i:i+batch_size]['file_path'].tolist()
         labels = torch.tensor(train_data.iloc[i:i+batch_size]['category'].tolist()).to(device)
-        
+        # print(batch_files)    
         images = wav2img.convert(batch_files)
         texts = wav2text.convert(batch_files)
         
@@ -55,6 +55,7 @@ for epoch in range(10):
     with torch.no_grad():
         for i in range(0, len(test_data), batch_size):
             batch_files = test_data.iloc[i:i+batch_size]['file_path'].tolist()
+            # print(batch_files)
             labels = torch.tensor(test_data.iloc[i:i+batch_size]['category'].tolist()).to(device)
             
             images = wav2img.convert(batch_files)
