@@ -1,31 +1,36 @@
 import speech_recognition as sr
 import torch
 import whisper
+from transformers import AutoTokenizer, AutoModel
 import warnings
 warnings.filterwarnings("ignore")
 
 device = 'mps' if torch.backends.mps.is_available() else 'cpu'
-model = whisper.load_model("base")
+
+whisper_model = whisper.load_model("base")
+tokenizer = AutoTokenizer.from_pretrained("finiteautomata/bertweet-base-sentiment-analysis")
+senti_bert = AutoModel.from_pretrained("finiteautomata/bertweet-base-sentiment-analysis").to(device)
 
 class wavTextConverter:
-    def __init__(self) -> None:
+    def __init__(self):
         self.file_paths = None
 
     def convert(self, file_paths):
         self.file_paths = file_paths
         batch = []
-        r = sr.Recognizer()
-        
-        for file_path in self.file_paths:
-            text = model.transcribe(file_path)["text"]
-            # print(text)
-            text_numbers = [ord(c) for c in text]
-            batch.append(text_numbers)
 
-        max_len = max(len(seq) for seq in batch)
-        padded_batch = [seq + [0]*(25 - len(seq)) for seq in batch]
-        
-        return torch.tensor(padded_batch, dtype=torch.float32).to(device=device)
+        for file_path in self.file_paths:
+            text = whisper_model.transcribe(file_path)["text"]
+            inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True, max_length=50).to(device)
+            with torch.no_grad():
+                outputs = senti_bert(**inputs)
+                embeddings = outputs.last_hidden_state.mean(dim=1)
+            
+            batch.append(embeddings)
+
+        batch_tensor = torch.cat(batch, dim=0)
+
+        return batch_tensor
         
 # a = wavTextConverter(["Dataset/YAF_happy/YAF_back_happy.wav", "Dataset/YAF_angry/YAF_bar_angry.wav"])
 # Sxx = a.convert()
