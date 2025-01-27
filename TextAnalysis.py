@@ -11,10 +11,8 @@ class TextLSTM(nn.Module):
         self.fc = nn.Sequential(nn.Dropout(0.5), nn.Linear(hidden_dim, output_dim))
 
     def forward(self, x):
-        x = x.unsqueeze(1)
         out, _ = self.LSTM(x)
         out = out[:, -1, :]
-        
         out = self.fc(out)
         return out
 

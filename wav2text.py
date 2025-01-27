@@ -24,9 +24,7 @@ class wavTextConverter:
             inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True, max_length=50).to(device)
             with torch.no_grad():
                 outputs = senti_bert(**inputs)
-                embeddings = outputs.last_hidden_state.mean(dim=1)
-            
-            batch.append(embeddings)
+            batch.append(outputs)
 
         batch_tensor = torch.cat(batch, dim=0)
 

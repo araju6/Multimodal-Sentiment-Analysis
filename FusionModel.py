@@ -11,7 +11,7 @@ class FusionModel(nn.Module):
     def __init__(self):
         super().__init__()
         self.CNN = SpectrogramCNN()
-        self.LSTM = TextLSTM()
+        self.LSTM = TextLSTM(input_dim=768)
 
         self.mlp = nn.Sequential(
             nn.Linear(6, 32),
